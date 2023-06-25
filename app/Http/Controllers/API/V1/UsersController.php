@@ -13,6 +13,17 @@ class UsersController extends APIController
     {
 
     }
+    public function index(Request $request)
+    {
+        $this->validate($request, [
+            'search' => 'nullable|string',
+            'page' => 'required|numeric',
+            'pagesize' => 'nullable|numeric',
+        ]);
+       $users = $this->userRepository->paginate($request->search, $request->page, $request->pagesize ?? 20);
+        return $this->respondSuccess('کاربران', $users);
+    }
+
     public function store(Request $request) {
         $this->validate($request, [
             'full_name' => 'required|string|min:3|max:255',
