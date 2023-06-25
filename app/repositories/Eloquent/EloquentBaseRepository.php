@@ -13,7 +13,7 @@ class EloquentBaseRepository implements RepositoryInterface
         return $this->model::create($data);
     }
 
-    public function update(int  , array $data)
+    public function update(int $id , array $data)
     {
         return $this->model::where('id', $id)->updata($data);
     }
