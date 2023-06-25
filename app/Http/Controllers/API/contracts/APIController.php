@@ -28,7 +28,7 @@ class APIController extends Controller
         $this->statusCode = $statusCode;
         return $this;
     }
-    public function respond(string $message = '', bool $isSuccessa = false, array $data = null)
+    public function respond(string $message = '', bool $isSuccess = false, array $data = null)
     {
         $responseData = [
           'success' => $isSuccess,
