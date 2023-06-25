@@ -77,4 +77,16 @@ class UsersTest extends TestCase
         $response = $this->call('PUT', 'api/v1/users', []);
         $this->assertEquals(422, $response->status());
     }
+    public function test_should_delete_a_user()
+    {
+        $response = $this->call('DELETE', 'api/v1/users', [
+            'id' => 609,
+        ]);
+        $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+    }
 }
