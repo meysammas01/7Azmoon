@@ -47,4 +47,9 @@ class EloquentBaseRepository implements RepositoryInterface
         }
         return $query->delete();
     }
+
+    public function paginate(string $search = null, int $page, int $pagesize = 20)
+    {
+        // TODO: Implement paginate() method.
+    }
 }
