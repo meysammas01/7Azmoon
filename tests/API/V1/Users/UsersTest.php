@@ -13,13 +13,15 @@ class UsersTest extends TestCase
         $this->artisan('migrate:refresh');
     }
     public function test_should_create_a_new_user() {
-       $response = $this->call('POST', 'api/v1/users', [
+        $newUser = [
             'full_name' => 'Meysam Maoumi',
             'email' => 'meysam.masoomy@gmail.com',
             'mobile' => '09031119856',
             'password' => '123456'
-        ]);
+        ];
+       $response = $this->call('POST', 'api/v1/users', $newUser);
         $this->assertEquals(201, $response->status());
+//        $this->seeInDatabase('users', $newUser);
         $this->seeJsonStructure([
             'success',
             'message',

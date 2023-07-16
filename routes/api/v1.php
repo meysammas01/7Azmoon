@@ -1,11 +1,6 @@
 <?php
 
 /** @var \Laravel\Lumen\Routing\Router $router */
-$router->get('a', function (){
-    dd(\App\Models\User::create([
-        'full_name' => 'mmmeysam',
-    ]));
-});
 
 $router->group(['prefix' => 'api/v1'], function () use ($router) {
     $router->group(['prefix' => 'users'], function () use ($router) {
@@ -16,4 +11,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->get('',  'API\V1\UsersController@index');
 
     });
+    $router->group(['prefix' => 'categories'], function () use ($router) {
+        $router->post('',  'API\V1\CategoriesController@store');
+
+    });
+
 });
