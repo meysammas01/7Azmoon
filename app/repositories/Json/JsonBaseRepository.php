@@ -59,7 +59,7 @@ class JsonBaseRepository implements RepositoryInterface
     {
         // TODO: Implement deleteBy() method.
     }
-    public function delete(int $id)
+    public function delete(int $id): bool
     {
         $users = json_decode(file_get_contents('users.json'), true);
         foreach ($users as $key => $user)
@@ -71,9 +71,10 @@ class JsonBaseRepository implements RepositoryInterface
                     unlink('users.json');
                 }
                 file_put_contents('users.json', json_encode($users));
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public function find(int $id)
