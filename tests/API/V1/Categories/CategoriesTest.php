@@ -44,6 +44,27 @@ class CategoriesTest extends TestCase
             'data',
         ]);
     }
+    public function test_ensure_we_can_update_a_category()
+    {
+        $category = $this->createCategories()[0];
+        $categoryData =  [
+            'id' => (string) $category->getId(),
+            'name' => $category->getName() . 'updated',
+            'slug' => $category->getSlug() . '-updated',
+        ];
+        $response = $this->call('PUT', 'api/v1/categories',$categoryData);
+        $this->seeInDatabase('categories', $categoryData);
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data' => [
+                'name',
+                'slug'
+            ],
+        ]);
+
+
+    }
     private function createCategories(int $count = 1): array
     {
         $categoryRepository = $this->app->make(CategoryRepositoryInterface::class);
