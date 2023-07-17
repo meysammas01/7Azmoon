@@ -11,7 +11,18 @@ class CategoriesController extends APIController
     public function __construct(private CategoryRepositoryInterface $categoryRepository)
     {
     }
-public function store(Request $request) {
+
+    public function index(Request $request)
+    {
+        $this->validate($request, [
+            'search' => 'nullable|string',
+            'page' => 'required|numeric',
+            'pagesize' => 'nullable|numeric',
+        ]);
+        $categories = $this->categoryRepository->paginate($request->search, $request->page, $request->pagesize ?? 20, ['name', 'slug']);
+        return $this->respondSuccess('دسته بندی ها', $categories);
+    }
+    public function store(Request $request) {
         $this->validate($request, [
             'name' => 'required|string|min:2|max:255',
             'slug' => 'required|string|min:2|max:255',
@@ -25,7 +36,7 @@ public function store(Request $request) {
             'slug' => $createdCategory->getSlug(),
         ]);
 }
-public function delete(Request $request) {
+    public function delete(Request $request) {
         $this->validate($request, [
             'id' => 'required|numeric',
         ]);
@@ -39,7 +50,7 @@ public function delete(Request $request) {
         }
         return $this->respondSuccess('دسته بندی حذف شد', []);
 }
-public function update(Request $request)
+    public function update(Request $request)
 {
     $this->validate($request, [
         'id' => 'required|numeric',
