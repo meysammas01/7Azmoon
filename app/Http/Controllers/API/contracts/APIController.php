@@ -11,6 +11,14 @@ class APIController extends Controller
     {
         return $this->setStatusCode(200)->respond($message, true, $data);
     }
+    public function respondInvalidValidation(string $message)
+    {
+        return  $this->setStatusCode(405)->respond($message, false);
+    }
+    public function respondForbidden(string $message)
+    {
+        return  $this->setStatusCode(403)->respond($message, false);
+    }
     public function respondCreated(string $message, array $data)
     {
         return $this->setStatusCode(201)->respond($message, true, $data);
