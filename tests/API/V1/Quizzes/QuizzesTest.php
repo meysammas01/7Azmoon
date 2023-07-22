@@ -2,6 +2,7 @@
 
 namespace Tests\API\V1\Quizzes;
 
+use App\repositories\Contracts\QuizRepositoryInterface;
 use Carbon\Carbon;
 use Tests\TestCase;
 
@@ -16,13 +17,13 @@ class QuizzesTest extends TestCase
     {
         $category = $this->createCategories()[0];
         $startDate = Carbon::now()->addDay();
-        $startDate = Carbon::now()->addDay();
+        $duration = Carbon::now()->addDay();
         $quizData =  [
             'category_id' => $category->getId(),
             'title' => 'quiz 1',
             'description' => 'this is a new quiz for test',
             'start_date' => $startDate,
-            'duration' => $startDate->addMinute(60),
+            'duration' => $duration->addMinute(60),
         ];
         $response = $this->call('POST', 'api/v1/quizzes', $quizData);
         $responseData = json_decode($response->getContent(), true)['data'];
@@ -44,4 +45,38 @@ class QuizzesTest extends TestCase
         ]);
 
     }
+
+public function test_ensure_that_we_can_delete_a_quiz()
+{
+    $quiz = $this->createQuiz()[0];
+    $response = $this->call('DELETE', 'api/v1/quizzes', [
+        'id' => $quiz->getId(),
+    ]);
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->seeJsonStructure([
+        'success',
+        'message',
+        'data',
+    ]);
+}
+private function createQuiz(int $count = 1): array
+{
+    $quizRepository = $this->app->make(QuizRepositoryInterface::class);
+    $category = $this->createCategories()[0];
+    $startDate = Carbon::now()->addDay();
+    $duration = Carbon::now()->addDay();
+    $quizData = [
+        'category_id' => $category->getId(),
+        'title' => 'Quiz 1',
+        'description' => 'this is a test quiz',
+        'duration' => $duration->addMinutes(30),
+        'start_date' => $startDate,
+    ];
+    $quizzes = [];
+    foreach (range(0 , $count) as $item)
+    {
+        $quizzes[] = $quizRepository->create($quizData);
+    }
+    return $quizzes;
+}
 }
