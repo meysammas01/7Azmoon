@@ -10,5 +10,6 @@ interface QuizEntity
     public function getCategoryId(): int;
     public function getStartDate(): string;
     public function getDuration(): string;
+    public function getIsActive(): bool;
 
 }
