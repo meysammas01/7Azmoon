@@ -59,19 +59,19 @@ public function test_ensure_that_we_can_delete_a_quiz()
         'data',
     ]);
 }
-private function createQuiz(int $count = 1): array
+private function createQuiz(int $count = 1, array $data = []): array
 {
     $quizRepository = $this->app->make(QuizRepositoryInterface::class);
     $category = $this->createCategories()[0];
     $startDate = Carbon::now()->addDay();
     $duration = Carbon::now()->addDay();
-    $quizData = [
+    $quizData = empty($data) ? [
         'category_id' => $category->getId(),
         'title' => 'Quiz 1',
         'description' => 'this is a test quiz',
         'duration' => $duration->addMinutes(30),
         'start_date' => $startDate,
-    ];
+    ] : $data;
     $quizzes = [];
     foreach (range(0 , $count) as $item)
     {
@@ -79,4 +79,56 @@ private function createQuiz(int $count = 1): array
     }
     return $quizzes;
 }
+    public function test_ensure_that_we_can_get_quizzes()
+    {
+        $this->createQuiz(30);
+        $pagesize = 3;
+        $response = $this->call('GET', 'api/v1/quizzes', [
+            'page' => 1,
+            'pagesize' => $pagesize,
+        ]);
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertEquals($pagesize, count($data['data']));
+        $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+
+    }
+    public function test_ensure_we_can_get_filtered_quiz()
+    {
+        $this->createQuiz(30);
+        $category = $this->createCategories()[0];
+        $startDate = Carbon::now()->addDay();
+        $duration = Carbon::now()->addDay();
+        $searchKey = 'specific-quiz';
+        $this->createQuiz(1, [
+            'category_id' => $category->getId(),
+            'title' => $searchKey,
+            'description' => 'this is the specific quiz',
+            'duration' => $duration->addMinutes(30),
+            'start_date' => $startDate,
+        ]);
+        $pagesize = 3;
+        $response = $this->call('GET', 'api/v1/quizzes', [
+            'page' => 1,
+            'search' => $searchKey,
+            'pagesize' => $pagesize,
+        ]);
+        $data = json_decode($response->getContent(), true);
+
+        foreach ($data['data'] as $quiz) {
+            $this->assertEquals($quiz['title'], $searchKey);
+        }
+        $this->assertEquals(200, $response->status());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data',
+        ]);
+
+    }
 }
