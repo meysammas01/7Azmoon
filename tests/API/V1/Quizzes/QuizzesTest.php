@@ -60,26 +60,7 @@ public function test_ensure_that_we_can_delete_a_quiz()
         'data',
     ]);
 }
-private function createQuiz(int $count = 1, array $data = []): array
-{
-    $quizRepository = $this->app->make(QuizRepositoryInterface::class);
-    $category = $this->createCategories()[0];
-    $startDate = Carbon::now()->addDay();
-    $duration = Carbon::now()->addDay();
-    $quizData = empty($data) ? [
-        'category_id' => $category->getId(),
-        'title' => 'Quiz 1',
-        'description' => 'this is a test quiz',
-        'duration' => $duration->addMinutes(30),
-        'start_date' => $startDate,
-    ] : $data;
-    $quizzes = [];
-    foreach (range(0 , $count) as $item)
-    {
-        $quizzes[] = $quizRepository->create($quizData);
-    }
-    return $quizzes;
-}
+
     public function test_ensure_that_we_can_get_quizzes()
     {
         $this->createQuiz(30);

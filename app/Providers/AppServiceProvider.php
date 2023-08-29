@@ -4,9 +4,11 @@ namespace App\Providers;
 
 use App\Models\Quiz;
 use App\repositories\Contracts\CategoryRepositoryInterface;
+use App\repositories\Contracts\QuestionRepositoryInterface;
 use App\repositories\Contracts\QuizRepositoryInterface;
 use App\repositories\Contracts\UserRepositoryInterface;
 use App\repositories\Eloquent\EloquentCategoryRepository;
+use App\repositories\Eloquent\EloquentQuestionRepository;
 use App\repositories\Eloquent\EloquentQuizRepository;
 use App\repositories\Eloquent\EloquentUserRepository;
 use App\repositories\Json\JsonUserRepository;
@@ -27,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, EloquentUserRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, EloquentCategoryRepository::class);
         $this->app->bind(QuizRepositoryInterface::class, EloquentQuizRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, EloquentQuestionRepository::class);
 
 
     }
