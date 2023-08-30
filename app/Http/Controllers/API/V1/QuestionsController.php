@@ -40,4 +40,16 @@ class QuestionsController extends APIController
            'options' => json_encode($question->getOptions()),
         ]);
     }
+    public function delete(Request $request) {
+        $this->validate($request, [
+           'id' => 'required|numeric',
+        ]);
+        if(!$this->questionRepository->find($request->id)) {
+            return $this->respondForbidden('سوال وجود ندارد.');
+        }
+        if(!$this->questionRepository->delete($request->id)) {
+            return $this->respondInternalError('سوال حذف نشد');
+        }
+        return $this->respondSuccess('سوال حذف شد', []);
+    }
 }
