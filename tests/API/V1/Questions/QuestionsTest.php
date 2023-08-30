@@ -62,4 +62,51 @@ class QuestionsTest extends TestCase
             'data'
         ]);
     }
+    public function test_ensure_we_can_get_questions () {
+        $this->createQuestion(30);
+        $pagesize = 3;
+        $response = $this->call('GET', 'api/v1/questions',[
+            'page' => 1,
+            'pagesize' => $pagesize,
+        ]);
+        $responseData = json_decode($response->getContent(), true)['data'];
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals($pagesize, count($responseData));
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
+    }
+    public function test_ensure_we_can_get_filtered_questions () {
+        $searchKey = 'What is golang?';
+        $quiz = $this->createQuiz()[0];
+        $this->createQuestion(1, [
+            'title' => $searchKey,
+            'is_active' => QuestionStatus::ACTIVE,
+            'score' => 5,
+            'quiz_id' => $quiz->getId(),
+            'options' => json_encode([
+                1 => ['text' => 'golang is a car', 'is_correct' => 0],
+                2 => ['text' => 'golang is a programming language', 'is_correct' => 1],
+                3 => ['text' => 'golang is a animal', 'is_correct' => 0],
+                4 => ['text' => 'golang is a toy', 'is_correct' => 0],
+            ]),
+        ]);
+        $response = $this->call('GET', 'api/v1/questions',[
+            'search' => $searchKey,
+            'page' => 1,
+            'pagesize' => 3,
+        ]);
+        $responseData = json_decode($response->getContent(), true)['data'];
+        foreach ($responseData as $question) {
+            $this->assertEquals($question['title'], $searchKey);
+        }
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->seeJsonStructure([
+            'success',
+            'message',
+            'data'
+        ]);
+    }
 }
