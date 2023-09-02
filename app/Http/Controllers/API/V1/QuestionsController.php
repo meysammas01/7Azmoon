@@ -56,11 +56,42 @@ class QuestionsController extends APIController
            'id' => 'required|numeric',
         ]);
         if(!$this->questionRepository->find($request->id)) {
-            return $this->respondForbidden('سوال وجود ندارد.');
+            return $this->respondNotFound('سوال وجود ندارد.');
         }
         if(!$this->questionRepository->delete($request->id)) {
             return $this->respondInternalError('سوال حذف نشد');
         }
         return $this->respondSuccess('سوال حذف شد', []);
+    }
+    public function update(Request $request) {
+        $this->validate($request, [
+            'id' => 'required|numeric',
+            'title' => 'required|string',
+            'score' => 'required|numeric',
+            'is_active' => 'required|numeric',
+            'quiz_id' => 'required|numeric',
+            'options' => 'required|json',
+        ]);
+        if(! $this->questionRepository->find($request->id)) {
+            $this->respondNotFound('سوال یافت نشد');
+        }
+        try {
+            $updatedQuestion = $this->questionRepository->update($request->id, [
+                'title' => $request->title,
+                'score' => $request->score,
+                'is_active' => $request->is_active,
+                'quiz_id' => $request->quiz_id,
+                'options' => $request->options,
+            ]);
+        }catch (\Exception $e){
+            return $this->respondInternalError($e->getMessage());
+        }
+        return $this->respondSuccess('سوال بروزرسانی شد', [
+            'title' => $updatedQuestion->getTitle(),
+            'score' => $updatedQuestion->getScore(),
+            'is_active' => $updatedQuestion->getIsActive(),
+            'quiz_id' => $updatedQuestion->getQuizId(),
+            'options' => json_encode($updatedQuestion->getOptions()),
+        ]);
     }
 }
